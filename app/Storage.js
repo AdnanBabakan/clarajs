@@ -97,7 +97,7 @@ export default class Storage {
 				let dataToBeWritten
 				switch(merge) {
 					case 'DISK_PRIOR':
-						dataToBeWritten = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
+						dataToBeWritten = { ...this.#data, ...(fileData ? JSON.parse(fileData) : {}) }
 						break
 					case 'MEMORY_PRIOR':
 					default:
@@ -120,7 +120,7 @@ export default class Storage {
 			let dataToBeWritten
 			switch(merge) {
 				case 'DISK_PRIOR':
-					dataToBeWritten = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
+					dataToBeWritten = { ...this.#data, ...(fileData ? JSON.parse(fileData) : {}) }
 					break
 				case 'MEMORY_PRIOR':
 				default:
@@ -138,11 +138,11 @@ export default class Storage {
 				let dataToBeSet
 				switch(merge) {
 					case 'DISK_PRIOR':
-						dataToBeSet = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
+						dataToBeSet = { ...this.#data, ...(fileData ? JSON.parse(fileData) : {}) }
 						break
 					case 'MEMORY_PRIOR':
 					default:
-						dataToBeSet = { ...JSON.parse(fileData ? fileData : '{}'), ...this.#data }
+						dataToBeSet = { ...(fileData ? JSON.parse(fileData) : {}), ...this.#data }
 				}
 				this.#data = dataToBeSet
 			}
