@@ -96,12 +96,12 @@ export default class Storage {
 				if (rr) throw err
 				let dataToBeWritten
 				switch(merge) {
-					case 'FILE_PRIOR':
+					case 'DISK_PRIOR':
 						dataToBeWritten = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
 						break
 					case 'MEMORY_PRIOR':
 					default:
-						dataToBeWritten = { ...JSON.parse(fileData ? fileData : '{}'), ...this.#data }
+						dataToBeWritten = { ...(fileData ? JSON.parse(fileData) : {}), ...this.#data }
 				}
 				fs.writeFile(file, JSON.stringify(dataToBeWritten, null, '\t'), 'UTF-8', err => {
 					callback(err)
@@ -119,12 +119,12 @@ export default class Storage {
 			let fileData = fs.readFileSync(this.#diskFile, 'UTF-8')
 			let dataToBeWritten
 			switch(merge) {
-				case 'FILE_PRIOR':
+				case 'DISK_PRIOR':
 					dataToBeWritten = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
 					break
 				case 'MEMORY_PRIOR':
 				default:
-					dataToBeWritten = { ...JSON.parse(fileData ? fileData : '{}'), ...this.#data }
+					dataToBeWritten = { ...(fileData ? JSON.parse(fileData) : {}), ...this.#data }
 			}
 			fs.writeFileSync(this.#diskFile, JSON.stringify(dataToBeWritten, null, '\t'), 'UTF-8')
 		} else {
@@ -137,7 +137,7 @@ export default class Storage {
 			if (merge) {
 				let dataToBeSet
 				switch(merge) {
-					case 'FILE_PRIOR':
+					case 'DISK_PRIOR':
 						dataToBeSet = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
 						break
 					case 'MEMORY_PRIOR':
@@ -146,7 +146,7 @@ export default class Storage {
 				}
 				this.#data = dataToBeSet
 			}
-			else this.#data = JSON.parse(fileData)
+			else this.#data = fileData ? JSON.parse(fileData) : {}
 			callback(err)
 		})
 	}
@@ -156,7 +156,7 @@ export default class Storage {
 		if (merge) {
 			let dataToBeSet
 			switch(merge) {
-				case 'FILE_PRIOR':
+				case 'DISK_PRIOR':
 					dataToBeSet = { ...this.#data, ...JSON.parse(fileData ? fileData : '{}') }
 					break
 				case 'MEMORY_PRIOR':
@@ -165,6 +165,6 @@ export default class Storage {
 			}
 			this.#data = dataToBeSet
 		}
-		else this.#data = fileData
+		else this.#data = fileData ? JSON.parse(fileData) : {}
 	}
 }
