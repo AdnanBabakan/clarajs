@@ -60,7 +60,18 @@ export default class Storage {
 		if (!this.exists(key, { encodedKey })) this.set(key, value, options)
 	}
 
+	isExpired(key) {
+		if (this.#data[key].options.expiresIn && this.#data[key].options.expiresIn < Date.now()) {
+			delete this.#data[key]
+			return true
+		} else return false
+	}
+
 	getDataSet() {
+		for(const prop in this.#data) {
+			this.isExpired(prop)
+		}
+
 		return this.#data
 	}
 
@@ -72,9 +83,11 @@ export default class Storage {
 		if (thisData) {
 			if (!thisData.hasOwnProperty('options')) thisData.options = {}
 
-			if (thisData.options.expiresIn && thisData.options.expiresIn < Date.now()) {
-				delete this.#data[key]
-				if(this.#errors) return new ClaraKeyExpired(`The '${key}' expired and got omitted`)
+			if(thisData.options.expiresIn) {
+				if(this.isExpired(key)) {
+					if(this.#errors) return new ClaraKeyExpired(`The '${key}' expired and got omitted`)
+					else return undefined
+				}
 			}
 
 			if (thisData.options.limit) {
@@ -85,6 +98,7 @@ export default class Storage {
 
 			return thisData.value
 		} else if (this.#errors) throw new ClaraExistenceError(`The '${key}' key doesn't exist`)
+		else return undefined
 	}
 
 	exists(key, options) {
