@@ -7,6 +7,8 @@ export default class Storage {
 	#data = {}
 	#diskFile = 'clara.json'
 	#errors = true
+	#cacheMode = false
+	#cacheExpiresIn = 60000
 
 	errorsOn() {
 		this.#errors = true
@@ -14,6 +16,21 @@ export default class Storage {
 
 	errorsOff() {
 		this.#errors = false
+	}
+
+	cacheModeOn() {
+		this.#cacheMode = true
+	}
+
+	cacheModeOff() {
+		this.#cacheMode = false
+	}
+
+	setCacheExpiresIn(v) {
+		if(typeof v === 'string'
+			|| typeof v === 'number')
+			this.#cacheExpiresIn = typeof v === 'string' ? i4h(v) : v
+		else if (this.#errors) throw new ClaraConfigurationError('The type of expiresIn should be string or number')
 	}
 
 	set(key, value, options = {}) {
@@ -32,10 +49,12 @@ export default class Storage {
 			options: {}
 		}
 
+		if (this.#cacheMode) this.#data[key].options.expiresIn = Date.now() + this.#cacheExpiresIn
+
 		if (options.expiresIn) {
 			if (typeof options.expiresIn === 'string'
 				|| typeof options.expiresIn === 'number')
-				this.#data[key].options.expiresIn = (Date.now()) +
+				this.#data[key].options.expiresIn = Date.now() +
 					(typeof options.expiresIn === 'string' ? i4h(options.expiresIn) : options.expiresIn)
 			else if (this.#errors) throw new ClaraConfigurationError('The type of expiresIn should be string or number')
 		}
@@ -44,8 +63,6 @@ export default class Storage {
 			if (typeof options.limit === 'number' && options.limit > 0) this.#data[key].options.limit = options.limit
 			else if (this.#errors) throw new ClaraConfigurationError('The type of limit should be number and larger than 0')
 		}
-
-		if (Object.entries(this.#data[key].options).length === 0) delete this.#data[key].options
 	}
 
 	setIfDoesntExist(key, value, options) {
@@ -68,7 +85,7 @@ export default class Storage {
 	}
 
 	getDataSet() {
-		for(const prop in this.#data) {
+		for (const prop in this.#data) {
 			this.isExpired(prop)
 		}
 
@@ -81,11 +98,10 @@ export default class Storage {
 		}
 		const thisData = this.#data[key]
 		if (thisData) {
-			if (!thisData.hasOwnProperty('options')) thisData.options = {}
 
-			if(thisData.options.expiresIn) {
-				if(this.isExpired(key)) {
-					if(this.#errors) return new ClaraKeyExpired(`The '${key}' expired and got omitted`)
+			if (thisData.options.expiresIn) {
+				if (this.isExpired(key)) {
+					if (this.#errors) return new ClaraKeyExpired(`The '${key}' expired and got omitted`)
 					else return undefined
 				}
 			}

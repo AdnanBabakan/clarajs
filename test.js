@@ -3,8 +3,12 @@ import Storage from './app/Storage.js'
 let storage = new Storage
 
 storage.errorsOff()
+storage.cacheModeOn()
+storage.setCacheExpiresIn('1s')
 
-storage.set('userOne', 'adnan', { expiresIn: 10 })
-console.log(storage.get('userOne'))
+storage.set('userOne', 'Adnan')
+storage.set('userTwo', 'Tarlan')
 
-setTimeout(() => console.log(storage.get('userOne')), 1000)
+console.log(storage.getDataSet())
+
+setTimeout(() => console.log(storage.getDataSet()), 996)
