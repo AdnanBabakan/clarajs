@@ -16,6 +16,15 @@ export class ClaraKeyExpired extends Error {
 	}
 }
 
+export class ClaraUniqueValueError extends Error {
+	constructor(message) {
+		super(message)
+
+		this.code = 'CLARA_UNIQUE_VALUE_ERROR'
+		this.info = 'The value entered is not unique as requested'
+	}
+}
+
 export class ClaraConfigurationError extends Error {
 	constructor(message) {
 		super(message)
