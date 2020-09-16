@@ -11,6 +11,10 @@
   ],
   "author": "Adnan Babakan",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdnanBabakan/clarajs"
+  },
   "devDependencies": {
     "eslint": "^7.9.0",
     "eslint-config-google": "^0.14.0",
