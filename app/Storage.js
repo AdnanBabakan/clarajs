@@ -34,8 +34,8 @@ export default class Storage {
 	}
 
 	set(key, value, options = {}) {
-		if (options.encodeKey) key = md5(key + '' + (options.keySalt ? options.keySalt : ''))
-		if (options.encodeValue) value = md5(value)
+		if (options.hashKey) key = md5(key + '' + (options.keySalt ? options.keySalt : ''))
+		if (options.hashKey) value = md5(value)
 
 		if (options.uniqueValue) {
 			for (const prop in this.#data) {
@@ -66,15 +66,15 @@ export default class Storage {
 	}
 
 	setIfDoesntExist(key, value, options) {
-		let encodedKey = false
+		let hashedKey = false
 		if (options) {
-			if (options.encodeKey) {
+			if (options.hashKey) {
 				key = md5(key + '' + (options.salt ? options.salt : ''))
-				encodedKey = true
+				hashedKey = true
 			}
 		}
 
-		if (!this.exists(key, { encodedKey })) this.set(key, value, options)
+		if (!this.exists(key, { hashedKey })) this.set(key, value, options)
 	}
 
 	isExpired(key) {
@@ -94,7 +94,7 @@ export default class Storage {
 
 	get(key, options) {
 		if (options) {
-			if (options.encodedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
+			if (options.hashedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
 		}
 		const thisData = this.#data[key]
 		if (thisData) {
@@ -119,7 +119,7 @@ export default class Storage {
 
 	exists(key, options) {
 		if (options) {
-			if (options.encodedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
+			if (options.hashedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
 		}
 
 		return this.#data.hasOwnProperty(key)
@@ -127,7 +127,7 @@ export default class Storage {
 
 	omit(key, options) {
 		if (options) {
-			if (options.encodedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
+			if (options.hashedKey) key = md5(key + '' + (options.salt ? options.salt : ''))
 		}
 
 		delete this.#data[key]
