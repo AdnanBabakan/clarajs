@@ -1,6 +1,6 @@
 {
   "name": "clarabase",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lightweight key-value database",
   "main": "app.js",
   "type": "module",
