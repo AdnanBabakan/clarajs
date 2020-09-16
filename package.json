@@ -1,5 +1,5 @@
 {
-  "name": "clara",
+  "name": "clarabase",
   "version": "1.0.0",
   "description": "Lightweight key-value database",
   "main": "app.js",
