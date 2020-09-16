@@ -35,7 +35,7 @@ export default class Storage {
 
 	set(key, value, options = {}) {
 		if (options.hashKey) key = md5(key + '' + (options.keySalt ? options.keySalt : ''))
-		if (options.hashKey) value = md5(value)
+		if (options.hashValue) value = md5(value)
 
 		if (options.uniqueValue) {
 			for (const prop in this.#data) {
